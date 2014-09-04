@@ -11,6 +11,6 @@ class Advisor(models.Model):
     first_name = models.CharField(max_length=64)
     last_name = models.CharField(max_length=64)
     crd = models.IntegerField()
-    company = models.ForeignKey(Company)
+    company = models.ForeignKey(Company, null=True)
     created = models.DateTimeField(auto_now_add=True, editable=False)
     modified = models.DateTimeField(auto_now=True, editable=False)
