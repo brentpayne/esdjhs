@@ -22,10 +22,9 @@ def create_companies(base_uri, advisors):
     crd_list = "|".join([advisor.get('indvlpk') for advisor in advisors if advisor and advisor.get('indvlpk')])
     advisor_employment_uri = "{base}/search/@indvlpk ({crd_list})/".format(base=base_uri,
                                                                     crd_list=crd_list)
-    response = grab_response(advisor_employment_uri)
-    if not response:
+    advisor_employment_data = grab_response_data(advisor_employment_uri)
+    if not advisor_employment_data:
         return {}  # yes, silently bail, this is demo code
-    advisor_employment_data = json.loads(response.read())
     company_lookup = {}
     for result in advisor_employment_data.get('result'):
         try:
@@ -70,16 +69,21 @@ def add_advisors(base_uri, advisors, company_lookup, seen):
     Advisor.objects.bulk_create(advisors_to_add)
 
 
-def grab_response(uri):
+def grab_response_data(uri):
     try:
         response = urllib2.urlopen(uri)
-    except urllib2.URLError as _:  # retry
+        data = json.loads(response.read())
+    except (urllib2.URLError, ValueError) as _:  # retry
         try:
             response = urllib2.urlopen(uri)
-        except urllib2.URLError as _:
-            response = None  # skip this is just for a demo
-    return response
+            data = json.loads(response.read())
+        except (urllib2.URLError, ValueError) as _:
+            data = None  # skip this is just for a demo
+    return data
 
+def get_total_number_of_pages(uri):
+    response = urllib2.urlopen(uri)
+    return int(json.loads(response.read())['info']['total_pages'])
 
 class Command(BaseCommand):
     option_list = BaseCommand.option_list + (make_option('--apikey', dest='api_key'),)
@@ -94,18 +98,18 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         api_key = options.get('api_key')
-        base_advisor_iapd_uri = 'https://api.enigma.io/v2/data/{api_key}/us.gov.sec.iapd.othrnm'.format(api_key=api_key)
+        base_advisor_iapd_uri = 'https://api.enigma.io/v2/data/{api_key}/us.gov.sec.iapd.indvl/select/firstnm,lastnm,indvlpk'.format(api_key=api_key)
         base_active_employment_iapd_uri = 'https://api.enigma.io/v2/data/{api_key}/us.gov.sec.iapd.crntemp'.format(
             api_key=api_key)
         seen = {}
         add_advisors_primed = functools.partial(add_advisors, base_uri=base_advisor_iapd_uri, seen=seen)
         create_companies_primed = functools.partial(create_companies, base_uri=base_active_employment_iapd_uri)
-        for page in range(1, 275*2+1):
+        total_pages = get_total_number_of_pages(base_advisor_iapd_uri)
+        for page in range(1, total_pages+1):
             advisors_uri = "{base_uri}/page/{page_num}/".format(base_uri=base_advisor_iapd_uri, page_num=page)
-            response = grab_response(advisors_uri)
-            if not response:
+            advisors_data = grab_response_data(advisors_uri)
+            if not advisors_data:
                 continue
-            advisors_data = json.loads(response.read())
             for advisors in grouper(advisors_data.get('result'), 100):
                 company_lookup = create_companies_primed(advisors=advisors)
                 add_advisors_primed(advisors=advisors, company_lookup=company_lookup)
