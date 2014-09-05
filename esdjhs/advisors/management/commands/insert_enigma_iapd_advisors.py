@@ -105,7 +105,7 @@ class Command(BaseCommand):
         add_advisors_primed = functools.partial(add_advisors, base_uri=base_advisor_iapd_uri, seen=seen)
         create_companies_primed = functools.partial(create_companies, base_uri=base_active_employment_iapd_uri)
         total_pages = get_total_number_of_pages(base_advisor_iapd_uri)
-        for page in range(1, total_pages+1):
+        for page in range(258*2+1, total_pages+1):
             advisors_uri = "{base_uri}/page/{page_num}/".format(base_uri=base_advisor_iapd_uri, page_num=page)
             advisors_data = grab_response_data(advisors_uri)
             if not advisors_data:
