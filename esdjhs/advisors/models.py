@@ -19,4 +19,10 @@ class Advisor(models.Model):
     modified = models.DateTimeField(auto_now=True, editable=False)
 
     def __unicode__(self):
+        return u"({crd}) {fn} {ln}".format(crd=self.crd, fn=self.first_name, ln=self.last_name)
+
+    def __str__(self):
         return "({crd}) {fn} {ln}".format(crd=self.crd, fn=self.first_name, ln=self.last_name)
+
+    def __repr__(self):
+        return str(self)
