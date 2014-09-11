@@ -4,6 +4,8 @@ from django.db import models
 class Company(models.Model):
     company_name = models.CharField(max_length=256)
     full_address = models.CharField(max_length=256)
+    latitude = models.IntegerField(null=True)
+    longitude = models.IntegerField(null=True)
 
     def __unicode__(self):
         return self.company_name
