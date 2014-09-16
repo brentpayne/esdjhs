@@ -18,7 +18,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         successes = 0
-        for i, company in enumerate(Company.objects.filter(latitude__isnull=True)):
+        for i, company in enumerate(Company.objects.all()):
             error, formatted_address, point, raw, type = geocode(company.full_address,
                                                                  celery_geolocator.NOMINATIM_GEOCODER)
             if point and len(point) > 1:
@@ -26,6 +26,7 @@ class Command(BaseCommand):
                 company.latitude = point[0]
                 company.longitude = point[1]
                 company.save()
+                print company.pk
 
         print "successfully processed {0} of {1} companies".format(successes, i+1)
         print "DONE"
