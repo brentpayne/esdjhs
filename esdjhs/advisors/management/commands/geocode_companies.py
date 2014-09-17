@@ -19,7 +19,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         successes = 0
         for i, company in enumerate(Company.objects.all()):
-            error, formatted_address, point, raw, type = geocode(company.full_address,
+            error, formatted_address, point, raw, geocode_type = geocode(company.full_address,
                                                                  celery_geolocator.NOMINATIM_GEOCODER)
             if point and len(point) > 1:
                 successes += 1
