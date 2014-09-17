@@ -1,11 +1,17 @@
 {% extends 'admin/base.html' %}
 
+{% block extrahead %}
+<script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.0/mapbox.js'></script>
+<link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.0/mapbox.css' rel='stylesheet' />
+{% endblock %}
+
 {% block content %}
     <h2>First Name Search</h2>
 
     Searching for advisors with first name "{{ first_name }}":
 
     <h3>Results</h3>
+    <div id="map" style="height: 260px">map</div>
     {% for advisor in advisors %}
         <p>
             <h4>{{ advisor.first_name }} {{ advisor.last_name }}</h4>
@@ -13,4 +19,53 @@
             {{ advisor.object.company.full_address }}
         </p>
     {% endfor %}
+
+ <script type="text/javascript">
+     (function(){
+
+        // Provide your access token
+        L.mapbox.accessToken = '{{ mapbox_token }}';
+        // Create a map in the div #map
+        var map = L.mapbox.map('map', '{{ mapbox_id }}');
+        L.control.scale().addTo(map);
+        map.setView([{{ view_y }}, {{ view_x }}], 11);
+        // Build a marker from a simple GeoJSON object:
+        var marker = L.mapbox.featureLayer({
+            type: 'Feature',
+            geometry: {
+                type: 'Point',
+                coordinates: [{{ point.get_x }}, {{ point.get_y }}]
+            },
+            properties: {
+                title: 'NYC-ish',
+                'marker-color': '#f86767'
+            }
+        }).addTo(map);
+
+        // Iterate over the featureLayer we've called "marker"
+        // and open its popup instead of clicking to trigger it.
+        marker.eachLayer(function(m) {
+          m.openPopup();
+        });
+        {% for advisor in advisors %}
+
+        // Build a marker from a simple GeoJSON object:
+        var marker = L.mapbox.featureLayer({
+            type: 'Feature',
+            geometry: {
+                type: 'Point',
+                coordinates: [{{ advisor.object.company.longitude }}, {{ advisor.object.company.latitude }}]
+            },
+            properties: {
+                title: '{{ advisor.first_name }} {{ advisor.last_name }}',
+                'marker-color': '#f867f7'
+            }
+        }).addTo(map);
+
+
+
+        {% endfor %}
+    })();
+ </script>
+
 {% endblock %}
