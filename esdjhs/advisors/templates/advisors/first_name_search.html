@@ -1,0 +1,16 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+    <h2>First Name Search</h2>
+
+    Searching for advisors with first name "{{ first_name }}":
+
+    <h3>Results</h3>
+    {% for advisor in advisors %}
+        <p>
+            <h4>{{ advisor.first_name }} {{ advisor.last_name }}</h4>
+            {{ advisor.object.company.company_name }}<br>
+            {{ advisor.object.company.full_address }}
+        </p>
+    {% endfor %}
+{% endblock %}
