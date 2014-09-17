@@ -10,7 +10,7 @@ class Company(models.Model):
 
     @property
     def geo_location(self):
-        return Point(self.latitude, self.longitude) if self.latitude and self.longitude else None
+        return Point(self.longitude, self.latitude) if self.latitude and self.longitude else None
 
     def __unicode__(self):
         return self.company_name

@@ -97,3 +97,8 @@ HAYSTACK_CONNECTIONS = {
     },
 }
 
+
+#MapBox
+MAPBOX_TOKEN = "pk.eyJ1IjoiYnJlbnRwYXluZSIsImEiOiJ0emwxVG5RIn0.o9OJWAp5pEjmLq2QhorHJw"
+MAPBOX_MAPID = "brentpayne.jhe1f6cn"
+

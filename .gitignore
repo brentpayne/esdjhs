@@ -3,3 +3,4 @@
 node_modules
 .idea
 *.sqlite3
+my_settings.py

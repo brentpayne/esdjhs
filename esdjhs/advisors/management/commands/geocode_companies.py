@@ -23,8 +23,8 @@ class Command(BaseCommand):
                                                                  celery_geolocator.NOMINATIM_GEOCODER)
             if point and len(point) > 1:
                 successes += 1
-                company.latitude = point[0]
                 company.longitude = point[1]
+                company.latitude = point[0]
                 company.save()
                 print company.pk
 
