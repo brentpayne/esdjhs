@@ -1,5 +1,6 @@
 FROM python:2.7
 MAINTAINER Brent Payne <brent.payne@gmail.com>
+RUN apt-get update
 RUN apt-get -qqy install binutils libproj-dev gdal-bin
 ADD requirements.txt /tmp/requirements.txt
 RUN pip install -r /tmp/requirements.txt  # v2
