@@ -92,7 +92,7 @@ STATIC_URL = '/static/'
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
-        'URL': 'http://192.168.59.103:9200/',
+        'URL': os.environ['ES_PORT'],
         'INDEX_NAME': 'haystack',
     },
 }

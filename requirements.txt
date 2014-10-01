@@ -1,4 +1,5 @@
 Django==1.7
 django-haystack==2.2
+elasticsearch==1.2
 pyelasticsearch==0.7
 celery-geolocator>=0.0.11
